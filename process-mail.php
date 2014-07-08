@@ -125,8 +125,11 @@ foreach ($ms as $part) {
 	    $start = $info['starting-pos-body'];
 	    $end = $info['ending-pos-body'];
 	    $ntxt = substr($txt, $start, $end - $start);
-	    $dtxt = mb_convert_encoding($ntxt, "UTF-8",
-	      strtoupper($headers['content-transfer-encoding']));
+	    if (! empty($headers['content-transfer-encoding'])) {
+		$dtxt = mb_convert_encoding($ntxt, "UTF-8",
+		  strtoupper($headers['content-transfer-encoding']));
+	    } else
+		$dtxt = $ntxt;
 
 	    $a = new spAttachment;
 	    $a->m_owner = $nDoc->m_owner;
@@ -135,8 +138,12 @@ foreach ($ms as $part) {
 	    $cdp = explode(';',$cd);
 	    foreach ($cdp as $pt) {
 		$pt = trim($pt);
-		if (startsWith($pt, "filename"))
-		    $a->m_name = substr($pt,10,-1);
+		if (startsWith($pt, "filename")) {
+		    $a->m_name = trim(substr($pt,9));
+		    if (startsWith($a->m_name, '"') &&
+		      endsWith($a->m_name, '"'))
+			$a->m_name = substr($a->m_name, 1, -1);
+		}
 	    }
 	    $a->create();
 	    $a->setPath(spEncodeAttachmentPath($a->m_oStr));
