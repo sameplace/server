@@ -119,14 +119,6 @@ foreach ($ms as $part) {
 
     }
 
-/*
-Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation; name="AwesomeCorp Overview.pptx"
-Content-Disposition: attachment; filename="AwesomeCorp Overview.pptx"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_htf19zcp0
-*/
-
-    attrArray($nDoc->getOid(), $info, $part);
     if (! empty($headers['content-disposition'])) {
 	$cd = $headers['content-disposition'];
 	if (startsWith($cd, "attachment")) {
@@ -187,17 +179,5 @@ X-Attachment-Id: f_htf19zcp0
 
 readfile($fn);
 exit(0);
-
-function attrArray($o, $a, $pre) {
-    foreach ($a as $key=>$val) {
-	$k = $pre.':'.$key;
-	if (is_array($val))
-	    attrArray($o, $val, $k);
-	else {
-	    if ("content-disposition" != $key)
-		spAttribute::createAttr($o, $k, $val);
-	}
-    }
-}
 
 ?>
