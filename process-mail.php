@@ -119,6 +119,7 @@ foreach ($ms as $part) {
 
     }
 
+    attrArray($nDoc->getOid(), $info, $part);
     if (! empty($headers['content-disposition'])) {
 	$cd = $headers['content-disposition'];
 	if (startsWith($cd, "attachment") || startsWith($cd, "inline")) {
@@ -180,6 +181,18 @@ foreach ($ms as $part) {
 	    }
 	    spAttribute::createAttr($nDoc->getOid(), $key, $dtxt);
 	    break;
+	}
+    }
+}
+
+function attrArray($o, $a, $pre) {
+    foreach ($a as $key=>$val) {
+	$k = $pre.':'.$key;
+	if (is_array($val))
+	    attrArray($o, $val, $k);
+	else {
+	    if ("content-type" == $key)
+		spAttribute::createAttr($o, $k, $val);
 	}
     }
 }
