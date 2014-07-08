@@ -156,7 +156,6 @@ class spOid {
 	$q = "UPDATE Oid SET mTime=? WHERE Oid IN (";
 	$v = array_merge(array(gmdate('Y-m-d H:i:s')), $oids);
 	prepArray($q, $oids);
-	htmlCommentArray($q,$v);
 	executeOrDie(spGetDB(), $q, $v);
     }
 
