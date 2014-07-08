@@ -121,7 +121,7 @@ foreach ($ms as $part) {
 
     if (! empty($headers['content-disposition'])) {
 	$cd = $headers['content-disposition'];
-	if (startsWith($cd, "attachment")) {
+	if (startsWith($cd, "attachment") || startsWith($cd, "inline")) {
 	    $start = $info['starting-pos-body'];
 	    $end = $info['ending-pos-body'];
 	    $ntxt = substr($txt, $start, $end - $start);
