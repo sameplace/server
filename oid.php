@@ -701,7 +701,9 @@ function spGetDB() {
     if (! empty($spdb))
 	return $spdb;
 
-    $spdb = new PDO("sqlite:/ext/www/public/archie.sqb");
+    global $spDbName;
+
+    $spdb = new PDO($spDbName);
     $spdb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $q = "pragma foreign_keys=ON";
     try {
