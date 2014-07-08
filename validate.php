@@ -15,41 +15,44 @@ if (empty($_REQUEST['u'])) {
 
 $u = new spUser();
 if ($u->inflate($_REQUEST['u'])) {
-    if ($u->isValidated())
-	echo '<h4>Already validated!</h4>';
-    else {
-	$u->validate();
-	$ds = $u->createDefDealSpace();
-	$deal = $ds->getOid();
-	$user = $u->getOid();
-	$admin = spUser::lookupEmail("archie@sameplace.com");
-	$ads = $admin->getDefDeal();
-	// find all docs "owned" by new user
-	$docs = spMimeDoc::lookupAll($ads->getOid(), $u->m_email);
-	if (! empty($docs)) {
-	    // make a list of references
-	    $which = array();
-	    foreach ($docs as $d) {
-		$some = $d->allMsgIds();
-		foreach ($some as $id)
-		    $which[$id] = $id;
-	    }
-	    $which = array_keys($which);
-	    $adocs = spMimeDoc::lookupAll($ads->getOid());
-	    $move = array();
-	    foreach ($adocs as $d) {
-		$some = $d->allMsgIds();
-		foreach ($some as $id)
-		    if (in_array($id, $which)) {
-			$move[$d->getOid()] = $d->getOid();
-			continue;
-		    }
-		}
-	    if (0 != count($move))
-		spMimeDoc::moveToDeal(array_keys($move), $ds->getOid(),
-		  $u->getOid());
-	}
+    if ($u->isValidated()) {
+	echo '<h4>Already validated!</h4></body></html>';
+	return;
     }
+
+    $u->validate();
+    $ds = $u->createDefDealSpace();
+    $deal = $ds->getOid();
+    $user = $u->getOid();
+    $admin = spUser::lookupEmail("archie@sameplace.com");
+    $ads = $admin->getDefDeal();
+    // find all docs "owned" by new user
+    $docs = spMimeDoc::lookupAll($ads->getOid(), $u->m_email);
+    if (! empty($docs)) {
+	// make a list of references
+	$which = array();
+	foreach ($docs as $d) {
+	    $some = $d->allMsgIds();
+	    foreach ($some as $id)
+		$which[$id] = $id;
+	}
+	$which = array_keys($which);
+	$adocs = spMimeDoc::lookupAll($ads->getOid());
+	$move = array();
+	foreach ($adocs as $d) {
+	    $some = $d->allMsgIds();
+	    foreach ($some as $id)
+		if (in_array($id, $which)) {
+		    $move[$d->getOid()] = $d->getOid();
+		    continue;
+		}
+	    }
+	if (0 != count($move))
+	    spMimeDoc::moveToDeal(array_keys($move), $ds->getOid(),
+	      $u->getOid());
+    }
+    echo '<h4>Thanks for validating!  Now you can '
+      .href2('login.php','Log in');
 }
 
 ?>
