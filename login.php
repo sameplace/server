@@ -64,8 +64,10 @@ $pass = "";
 
 // process the login attempt
 if (isset($_POST['action'])) {
-    $email = $_POST['email'];
-    $pass = $_POST['pass'];
+    if (! empty($_POST['email']))
+	$email = $_POST['email'];
+    if (! empty($_POST['pass']))
+	$pass = $_POST['pass'];
 
     // validate the login info
     $u = validateLogin($email, $pass);
