@@ -37,7 +37,6 @@ $docs = spMimeDoc::lookupAll($ds->getOid());
 foreach ($docs as $doc) {
     $iStr = "";
     $irt = spMimeDoc::lookupMessageId($doc->m_InReplyTo);
-    htmlCommentArray('irt',$irt);
     if (! empty($irt))
 	$iStr = href2('editMimeDoc.php?oid='.$irt->m_oStr, $irt->getOid());
     echo spTableRow(
