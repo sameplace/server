@@ -20,15 +20,15 @@ $oStr = $_REQUEST['oid'];
 
 $a = new spAttachment();
 if (! $a->inflate($oStr))
-    return showError("Error: cannot find Attachment='".htmlentities($oStr));
+    return showError("Error: cannot find Attachment='".htmlentities($oStr)."'");
 
 $doc = new spMimeDoc();
-$doc->getOid() = $a->m_mDoc;
+$doc->setOid($a->m_mDoc);
 if (! $doc->inflate())
-    return showError("Error: cannot find Attachment='".htmlentities($oStr));
+    return showError("Error: cannot find Attachment='".htmlentities($oStr)."'");
 
 if ($doc->m_owner != $me->getOid() && !$me->isAdmin())
-    return showError("Error: cannot find Attachment='".htmlentities($oStr));
+    return showError("Error: cannot find Attachment='".htmlentities($oStr)."'");
 
 header('Content-Type: '.$a->m_mType);
 header('Content-Disposition: attachment; filename="'.$a->m_name.'"');
