@@ -622,6 +622,12 @@ class spMimeDoc extends spOid {
 };
 
 class spAttachment extends spOid {
+    public function toJson() {
+	$me = array(
+	  "MimeType"	=> $this->m_mType,
+	  "Name"	=> $this->m_name);
+	return array_merge(parent::toJson(), $me);
+    }
     public function __construct() {
 	parent::__construct();
 	$this->m_oType = self::$oTypeMap2['attachment'];
