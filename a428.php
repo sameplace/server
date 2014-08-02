@@ -39,6 +39,16 @@ if (0 == $u->isValidated()) {
     return;
 }
 
+if (0 != $u->isLocked()) {
+    echo json_encode(' Error: Your account is locked');
+    return;
+}
+
+if (! password_verify($pass, $u->getPassword())) {
+    echo json_encode('Error: invalid login');
+    return;
+}
+
 $_SESSION['email'] = $u->m_email;
 echo json_encode('OK');
 
