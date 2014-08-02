@@ -40,7 +40,7 @@ if (0 == $u->isValidated()) {
 }
 
 if (0 != $u->isLocked()) {
-    echo json_encode(' Error: Your account is locked');
+    echo json_encode('Error: account is locked');
     return;
 }
 
