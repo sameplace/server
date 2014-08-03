@@ -1,5 +1,7 @@
 <?php
 
+include('config.php');
+
 header('Content-Type: application/json;charset=utf-8;');
 
 // start from scratch
@@ -19,8 +21,8 @@ if (empty($_POST['pass'])) {
     echo json_encode('Error: Missing pass');
     return;
 }
-$e = $_POST['email'];
-$p = $_POST['pass'];
+$email = $_POST['email'];
+$pass = $_POST['pass'];
 
 $u = null;
 try {
