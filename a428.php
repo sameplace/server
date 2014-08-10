@@ -3,6 +3,7 @@
 include('config.php');
 
 header('Content-Type: application/json;charset=utf-8;');
+header('Access-Control-Allow-Origin: *');
 
 // start from scratch
 if (isset($_SESSION))  {
