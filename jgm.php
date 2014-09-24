@@ -1,8 +1,6 @@
 <?php include("spauth.php"); ?>
 <?php
-include("config.php");
-
-header('Content-Type: application/json;charset=utf-8;');
+include("json-config.php");
 
 $me = spUser::lookupMe();
 if (null == $me) {

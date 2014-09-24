@@ -1,6 +1,7 @@
 <?php
 
-include("json-config.php");
+include("config.php");
+spHeaderHack();
 
 if (empty($_REQUEST['oid'])) {
     header('Content-Type: application/json;charset=utf-8;');
