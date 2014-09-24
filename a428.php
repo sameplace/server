@@ -1,6 +1,8 @@
 <?php
 
-include('json-config.php');
+include("config.php");
+header('Content-Type: application/json;charset=utf-8;');
+spHeaderHack();
 
 // start from scratch
 if (isset($_SESSION))  {
@@ -19,6 +21,7 @@ if (empty($_POST['pass'])) {
     echo json_encode('Error: Missing pass');
     return;
 }
+
 $email = $_POST['email'];
 $pass = $_POST['pass'];
 

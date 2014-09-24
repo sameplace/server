@@ -1,5 +1,5 @@
-<?php include("spauth.php"); ?>
 <?php
+
 include("json-config.php");
 
 $me = spUser::lookupMe();
