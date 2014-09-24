@@ -1,5 +1,6 @@
 <?php
-include("config.php");
+
+include("json-config.php");
 
 if (empty($_REQUEST['oid'])) {
     header('Content-Type: application/json;charset=utf-8;');
@@ -22,4 +23,5 @@ header('Cache-Control: must-revalidate');
 header('Content-Length: '.filesize($a->m_path));
 flush();
 readfile($a->m_path);
+
 ?>
