@@ -1,5 +1,7 @@
 <?php
 
+// jgd oid=[dealspace]
+
 include("json-config.php");
 
 $me = spUser::lookupMe();
@@ -9,7 +11,7 @@ if (null == $me) {
 }
 
 if (empty($_REQUEST['oid']))
-    $ds = $u->getDefDeal();
+    $ds = $me->getDefDeal();
 else {
     $oid = $_REQUEST['oid'];
     $ds = new spDealSpace;
