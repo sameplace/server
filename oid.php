@@ -19,6 +19,12 @@ class spOid {
 	  "mTime"	=> $this->m_mTime);
     }
 
+    public function toJsonUpdated() {
+	return array(
+	  "oid"		=> $this->m_oStr,
+	  "mTime"	=> $this->m_mTime);
+    }
+
     // internal stuff
     protected static $oMax;
     protected static $oMap;
@@ -487,6 +493,46 @@ class spDealSpace extends spOid {
 	    $ret->mergeAttrs();
 	}
 	return $ret;
+    }
+    public function changeName($n) {
+	// can't set it to null
+	if (empty($n))
+	    return false;
+
+	// already set
+	if ($n == $this->m_name)
+	    return false;
+
+	// can't change default name
+	global $defDealSpace;
+
+	if ($defDealSpace == $this->m_name)
+	    return false;
+
+	// can't change name to magic token
+	if ($defDealSpace == $n)
+	    return false;
+
+	// make sure we don't already have one with this name
+	$db = spGetDB();
+	$q = "SELECT * FROM DealSpace WHERE name=?";
+	$v = array($n);
+	$s = queryOrDie($db, $q, $v);
+	$found = false;
+	while ($r = $s->fetch(PDO::FETCH_ASSOC))
+	    $found = true;
+	if ($found)
+	    return false;
+
+	// do it in a transaction
+	beginTranOrDie($db);
+	$q = "UPDATE DealSpace SET name=? WHERE oid=?";
+	$v = array($n, $this->getOid());
+	executeDoNotDie($db, $q, $v);
+	$this->updateMTime();
+	commitOrDie($db);
+
+	return true;
     }
 };
 
