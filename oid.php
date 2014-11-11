@@ -515,8 +515,9 @@ class spDealSpace extends spOid {
 
 	// make sure we don't already have one with this name
 	$db = spGetDB();
-	$q = "SELECT * FROM DealSpace WHERE name=?";
-	$v = array($n);
+	$q = "SELECT * FROM DealSpace WHERE name=? AND oid IN"
+	  ." (SELECT oid FROM Oid WHERE owner=? AND oType=?)";
+	$v = array($n, $this->m_owner, self::$oTypeMap2['dealspace']);
 	$s = queryOrDie($db, $q, $v);
 	$found = false;
 	while ($r = $s->fetch(PDO::FETCH_ASSOC))
@@ -566,7 +567,7 @@ class spMimeDoc extends spOid {
 	    $part = $parts[0];
 	    $tag = $part.':body';
 	    $body = $this->$tag;
-	    $me = array_merge($me, array("Content"=>$body));
+	    $me = array_merge($me, array("Content"=>utf8_encode($body)));
 	}
 
 	return array_merge(parent::toJson(), $me);
