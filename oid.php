@@ -498,6 +498,31 @@ class spMimeDoc extends spOid {
 	  "Date"	=> $this->m_Date,
 	  "InReplyTo"	=> $this->m_InReplyTo,
 	  "References"	=> $this->m_References);
+
+	// XXX find content
+	$what = "";
+	$wkey = "";
+	foreach ($this as $key=>$val) {
+	    if (endsWith($key, ":content-type")
+	      && startsWith($val, "text/plain")) {
+		$what = $val;
+		$wkey = $key;
+	    } else if (endsWith($key, ":content-type")
+	      && startsWith($val, "text/html")) {
+		if (empty($what)) {
+		    $what = $val;
+		    $wkey = $key;
+		}
+	    }
+	}
+	if (! empty($what)) {
+	    $parts = explode(':',$wkey);
+	    $part = $parts[0];
+	    $tag = $part.':body';
+	    $body = $this->$tag;
+	    $me = array_merge($me, array("Content"=>$body));
+	}
+
 	return array_merge(parent::toJson(), $me);
     }
     public function __construct() {
