@@ -546,6 +546,10 @@ class spMimeDoc extends spOid {
 	  "Subject"	=> $this->m_Subject,
 	  "InReplyTo"	=> $this->m_InReplyTo,
 	  "References"	=> $this->m_References);
+	if (! empty($this->m_To))
+	    $me['To'] = $this->m_To;
+	if (! empty($this->m_Cc))
+	    $me['Cc'] = $this->m_Cc;
 
 	// XXX find content
 	$what = "";
