@@ -412,9 +412,9 @@ class spAttribute {
 	    $a = new spAttribute();
 	    foreach ($r as $key=>$val) {
 		$tag = "m_".$key;
-		$u->$tag = $val;
+		$a->$tag = $val;
 	    }
-	    $ret[] = $u;
+	    $ret[] = $a;
 	}
 	return $ret;
     }
@@ -543,6 +543,7 @@ class spMimeDoc extends spOid {
 	  "MessageId"	=> $this->m_MessageId,
 	  "FromAddr"	=> $this->m_FromAddr,
 	  "Date"	=> $this->m_Date,
+	  "Subject"	=> $this->m_Subject,
 	  "InReplyTo"	=> $this->m_InReplyTo,
 	  "References"	=> $this->m_References);
 
