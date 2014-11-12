@@ -45,20 +45,20 @@ echo '<tr><th>Subject</th><td>'.htmlentities($doc->m_Subject).'</td>';
 echo '<tr><th>Date</th><td>'.htmlentities($doc->m_Date).'</td>';
 
 $who = array();
-$tag = "m_1:headers:from";
+$tag = "FromAddr";
 if (!empty($doc->$tag)) {
     $parts = mailparse_rfc822_parse_addresses($doc->$tag);
     foreach ($parts as $key=>$val)
 	$who[$val['address']] = $val;
 }
-$tag = "m_1:headers:to";
+$tag = "To";
 if (!empty($doc->$tag)) {
     echo '<tr><th>To</th><td>'.htmlentities($doc->$tag).'</td>';
     $parts = mailparse_rfc822_parse_addresses($doc->$tag);
     foreach ($parts as $key=>$val)
 	$who[$val['address']] = $val;
 }
-$tag = "m_1:headers:cc";
+$tag = "Cc";
 if (!empty($doc->$tag)) {
     echo '<tr><th>Cc</th><td>'.htmlentities($doc->$tag).'</td>';
     $parts = mailparse_rfc822_parse_addresses($doc->$tag);
@@ -111,7 +111,8 @@ if (! empty($what)) {
     $part = $parts[0];
     $tag = $part.':body';
     $body = $doc->$tag;
-    echo spTableRow(spTableData('<pre>'.$body.'</pre>', ' colspan="2"'));
+    echo spTableRow(spTableData('<pre>'.htmlentities($body).'</pre>',
+      ' colspan="2"'));
 
     /*
     if ("text/plain" == $info['content-type']) {
