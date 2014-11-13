@@ -36,4 +36,6 @@ spMimeDoc::moveToDeal(array_keys($move), $ds->getOid());
 spParticipant::reset($ds);
 spParticipant::reset($dsd);
 
+echo json_encode($ds->toJsonUpdated());
+
 ?>
