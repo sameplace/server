@@ -556,6 +556,7 @@ class spMimeDoc extends spOid {
     public function toJson() {
 	$me = array(
 	  "MessageId"	=> $this->m_MessageId,
+	  "Deal"	=> $this->encode($this->m_deal),
 	  "FromAddr"	=> $this->m_FromAddr,
 	  "Date"	=> $this->m_Date,
 	  "Subject"	=> $this->m_Subject,
