@@ -10,6 +10,7 @@ INSERT INTO OidType (oKind) VALUES ('address');
 INSERT INTO OidType (oKind) VALUES ('dealspace');
 INSERT INTO OidType (oKind) VALUES ('mimedoc');
 INSERT INTO OidType (oKind) VALUES ('attachment');
+INSERT INTO OidType (oKind) VALUES ('participant');
 
 CREATE TABLE Oid (
     oid		integer primary key,
@@ -41,7 +42,7 @@ CREATE TABLE User (				/* OidType=2 */
     validated	int DEFAULT 0,		/* responded to the email */
     locked	int DEFAULT 0,		/* we can lock them out */
     badpass	int DEFAULT 0,		/* count */
-    FOREIGN KEY(oid) REFERENCES Oid(oid)
+    FOREIGN KEY(oid) REFERENCES Oid(oid) ON DELETE CASCADE
   );
 
 /* we own ourselves */
@@ -58,7 +59,7 @@ CREATE TABLE Address (
     oid		integer primary key,
     email	text COLLATE NOCASE,		/* contact */
     validated	int DEFAULT 0,			/* boolean */
-    FOREIGN KEY(oid) REFERENCES Oid(oid)
+    FOREIGN KEY(oid) REFERENCES Oid(oid) ON DELETE CASCADE
   );
 
 CREATE TABLE DealSpace (
@@ -66,7 +67,7 @@ CREATE TABLE DealSpace (
     editable	int DEFAULT 1,			/* boolean */
     hidden	int DEFAULT 0,			/* boolean */
     name	text COLLATE NOCASE,		/* user-specified */
-    FOREIGN KEY(oid) REFERENCES Oid(oid)
+    FOREIGN KEY(oid) REFERENCES Oid(oid) ON DELETE CASCADE
   );
 
 CREATE TABLE MimeDoc (
@@ -77,7 +78,7 @@ CREATE TABLE MimeDoc (
     hidden	int DEFAULT 0,			/* boolean */
     private	int DEFAULT 1,			/* boolean */
     FOREIGN KEY(deal) REFERENCES DealSpace(oid),
-    FOREIGN KEY(oid) REFERENCES Oid(oid)
+    FOREIGN KEY(oid) REFERENCES Oid(oid) ON DELETE CASCADE
   );
 
 CREATE TABLE Attachment (
@@ -87,6 +88,14 @@ CREATE TABLE Attachment (
     name	text,		/* given filename */
     path	text,		/* filesystem */
     FOREIGN KEY(mDoc) REFERENCES MimeDoc(oid),
-    FOREIGN KEY(oid) REFERENCES Oid(oid)
+    FOREIGN KEY(oid) REFERENCES Oid(oid) ON DELETE CASCADE
   );
 
+CREATE TABLE Participant (
+    oid		integer primary key,
+    deal	integer,			/* part of a deal */
+    Addr	text COLLATE NOCASE,		/* just the address */
+    Role	int DEFAULT 0,			/* enum */
+    FOREIGN KEY(deal) REFERENCES DealSpace(oid),
+    FOREIGN KEY(oid) REFERENCES Oid(oid) ON DELETE CASCADE
+  );
