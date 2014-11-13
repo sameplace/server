@@ -16,19 +16,25 @@ function jGetOid() {
     return $ret;
 }
 
-function jValidateObj(&$ret, &$obj, $args) {
-    if (! $obj->inflate($ret->oid))
+function myInflate(&$me, &$obj, $oid) {
+    if (! $obj->inflate($oid))
 	return jError();
-    if (! $ret->me->isAdmin() && $obj->m_owner != $ret->me->getOid())
+    if (! $me->isAdmin() && $obj->m_owner != $me->getOid())
 	return jError();
+    return $obj;
+}
 
-    $p = explode(',', $args);
-    foreach ($p as $arg) {
-	if (empty($_REQUEST[$arg]))
-	    return jError();
-	$ret->$arg = $_REQUEST[$arg];
+function jValidateObj(&$ret, &$obj, $args = null) {
+    if (! empty($args)) {
+	$p = explode(',', $args);
+	foreach ($p as $arg) {
+	    if (empty($_REQUEST[$arg]))
+		return jError();
+	    $ret->$arg = $_REQUEST[$arg];
+	}
     }
-    return $ret;
+
+    return myInflate($ret->me, $obj, $ret->oid);
 }
 
 // get-dealspace by oid, plus args
