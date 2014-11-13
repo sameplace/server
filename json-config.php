@@ -1,6 +1,7 @@
 <?php
 
 include("config.php");
+include("jutils.php");
 
 if (! isset($_SESSION))
     session_start();
