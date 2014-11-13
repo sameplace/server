@@ -118,6 +118,7 @@ foreach ($ms as $part) {
 	foreach ($snag as $key=>$val)
 	    if (! empty($headers[$val]))
 		spAttribute::createAttr($nDoc->getOid(), $key, $headers[$val]);
+	spParticipant::reset($ds);
     }
 
     attrArray($nDoc->getOid(), $info, $part);

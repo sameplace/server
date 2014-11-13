@@ -62,6 +62,7 @@ foreach ($docs as $d) {
 	}
 }
 spMimeDoc::moveToDeal(array_keys($move), $ds->getOid());
+spParticipant::reset($ds);
 
 echo 'Moved '.(1+count($move)).' messages to '
   .href2('editDealSpace.php?oid='.$ds->m_oStr, 'DealSpace named "'
