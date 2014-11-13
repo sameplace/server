@@ -147,6 +147,11 @@ class spOid {
 		break;
 	}
     }
+    public function remove() {
+	$q = "DELETE FROM Oid WHERE oid=?";
+	$v = array($this->getOid());
+	executeOrDie(spGetDB(), $q, $v);
+    }
 
     public function updateMTime() {
 	$q = "UPDATE Oid SET mTime=? WHERE Oid=?";
@@ -273,6 +278,7 @@ class spUser extends spOid {
 		$tag = "m_".$key;
 		$u->$tag = $val;
 	    }
+	    $u->mergeAttrs();
 	    $ret[] = $u;
 	}
 	return $ret;
@@ -431,6 +437,15 @@ class spDealSpace extends spOid {
     public function toJson() {
 	$me = array(
 	  "name"	=> $this->m_name);
+	$ps = spParticipant::lookupAll($this);
+	if (0 != count($ps)) {
+	    $ja = array();
+	    foreach ($ps as $p) {
+		$tag = "party".count($ja);
+		$ja[$tag] = $p->m_oStr;
+	    }
+	    $me = array_merge($me, $ja);
+	}
 	return array_merge(parent::toJson(), $me);
     }
     public function __construct() {
@@ -757,6 +772,101 @@ class spAttachment extends spOid {
 	$this->updateMTime();
 	commitOrDie($db);
 	$this->m_path = $p;
+    }
+};
+
+class spParticipant extends spOid {
+    public function toJson() {
+	$me = array(
+	  "Addr"	=> $this->m_Addr,
+	  "Role"	=> $this->m_Role);
+	return array_merge(parent::toJson(), $me);
+    }
+    public function __construct() {
+	parent::__construct();
+	$this->m_oType = self::$oTypeMap2['participant'];
+	$this->m_Addr = "";
+	$this->m_Role = 0;
+    }
+    public function inflate($oStr = null) {
+	if (! parent::inflate($oStr))
+	    return false;
+	$q = "SELECT * FROM Participant WHERE oid=?";
+	$v = array($this->getOid());
+	return $this->inflateHelper($q, $v);
+    }
+    public function create() {
+	parent::allocate();
+	$q = "INSERT INTO Participant"
+	  ." (oid,deal,Addr,Role)"
+	  ." VALUES (?,?,?,?)";
+	$v = array();
+	$v[] = $this->getOid();
+	$v[] = $this->m_deal;
+	$v[] = $this->m_Addr;
+	$v[] = $this->m_Role;
+	return executeDoNotDie(spGetDB(), $q, $v);
+    }
+    public static function lookupAll($md) {
+	$ret = array();
+	$q = "SELECT * FROM Oid o, Participant p WHERE o.oType=?"
+	  ." AND p.deal=? AND o.oid=p.oid";
+	$v = array(self::$oTypeMap2['participant'], $md);
+	$s = queryOrDie(spGetDB(), $q, $v);
+	while ($r = $s->fetch(PDO::FETCH_ASSOC)) {
+	    $p = new spParticipant();
+	    foreach ($r as $key=>$val) {
+		$tag = "m_".$key;
+		$p->$tag = $val;
+	    }
+	    $p->mergeAttrs();
+	    $ret[$p->m_Addr] = $p;
+	}
+	return $ret;
+    }
+    public static function reset(&$md) {
+	// what's the list look like so far?
+	$cur = spParticipant::lookupAll($md->getOid());
+	// grab all the docs, make a list
+	$ps = array();
+	$docs = spMimeDoc::lookupAll($md->getOid());
+	foreach ($docs as $doc) {
+	    $which = array("From","To","Cc");
+	    foreach ($which as $h) {
+		$tag = "m_".$h;
+		if (empty($doc->$tag))
+		    continue;
+		$hdr = $doc->$tag;
+		$whom = mailparse_rfc822_parse_addresses($hdr);
+		foreach ($whom as $who) {
+		    if (empty($who['address']))
+			continue;
+		    $addr = $who['address'];
+		    if ("assist@arnie.sameplace.com" == $addr)
+			continue;
+		    $ps[$addr] = $addr;
+		}
+	    }
+	}
+	// already have 'em?
+	$done = array();
+	foreach ($ps as $who)
+	    if (! empty($cur[$who])) {
+		unset($cur[$who]);
+		$done[] = $who;
+	    }
+	foreach ($done as $who)
+	    unset($ps[$who]);
+	foreach ($cur as $who)
+	    $who->remove();
+	// make what's left
+	foreach ($ps as $who) {
+	    $p = new spParticipant();
+	    $p->m_owner = $md->m_owner;
+	    $p->m_deal = $md->getOid();
+	    $p->m_Addr = $who;
+	    $p->create();
+	}
     }
 };
 
