@@ -437,7 +437,7 @@ class spDealSpace extends spOid {
     public function toJson() {
 	$me = array(
 	  "name"	=> $this->m_name);
-	$ps = spParticipant::lookupAll($this);
+	$ps = spParticipant::lookupAll($this->getOid());
 	if (0 != count($ps)) {
 	    $ja = array();
 	    foreach ($ps as $p) {
