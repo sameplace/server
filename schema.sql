@@ -94,8 +94,9 @@ CREATE TABLE Attachment (
 CREATE TABLE Participant (
     oid		integer primary key,
     deal	integer,			/* part of a deal */
-    Addr	text COLLATE NOCASE,		/* just the address */
     Role	int DEFAULT 0,			/* enum */
+    Addr	text COLLATE NOCASE,		/* just the address */
+    Name	text COLLATE NOCASE,		/* optional name */
     FOREIGN KEY(deal) REFERENCES DealSpace(oid),
     FOREIGN KEY(oid) REFERENCES Oid(oid) ON DELETE CASCADE
   );
