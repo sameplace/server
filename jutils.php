@@ -10,7 +10,7 @@ function jGetOid() {
 	return jError();
     $ret = new stdClass;
     $ret->me = spUser::lookupMe();
-    if (null == $me)
+    if (null == $ret->me)
 	return jError();
     $ret->oid = $_REQUEST['oid'];
     return $ret;
