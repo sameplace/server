@@ -782,7 +782,7 @@ class spParticipant extends spOid {
 	  "Addr"	=> $this->m_Addr,
 	  "Role"	=> $this->m_Role);
 	if (! empty($this->m_Name))
-	    $me[] = $this->m_Name;
+	    $me["Name"] = $this->m_Name;
 	return array_merge(parent::toJson(), $me);
     }
     public function __construct() {
