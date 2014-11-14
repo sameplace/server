@@ -781,6 +781,8 @@ class spParticipant extends spOid {
 	$me = array(
 	  "Addr"	=> $this->m_Addr,
 	  "Role"	=> $this->m_Role);
+	if (! empty($this->m_Name))
+	    $me[] = $this->m_Name;
 	return array_merge(parent::toJson(), $me);
     }
     public function __construct() {
@@ -799,12 +801,13 @@ class spParticipant extends spOid {
     public function create() {
 	parent::allocate();
 	$q = "INSERT INTO Participant"
-	  ." (oid,deal,Addr,Role)"
-	  ." VALUES (?,?,?,?)";
+	  ." (oid,deal,Addr,Name,Role)"
+	  ." VALUES (?,?,?,?,?)";
 	$v = array();
 	$v[] = $this->getOid();
 	$v[] = $this->m_deal;
 	$v[] = $this->m_Addr;
+	$v[] = $this->m_Name;
 	$v[] = $this->m_Role;
 	return executeDoNotDie(spGetDB(), $q, $v);
     }
@@ -845,27 +848,33 @@ class spParticipant extends spOid {
 		    $addr = $who['address'];
 		    if ("assist@arnie.sameplace.com" == $addr)
 			continue;
-		    $ps[$addr] = $addr;
+		    $party = new stdClass;
+		    $party->addr = $addr;
+		    $party->name = "";
+		    if ($who['display'] != $who['address'])
+			$party->name = $who['display'];
+		    $ps[$addr] = $party;
 		}
 	    }
 	}
 	// already have 'em?
 	$done = array();
-	foreach ($ps as $who)
-	    if (! empty($cur[$who])) {
-		unset($cur[$who]);
-		$done[] = $who;
+	foreach ($ps as $addr=>$party)
+	    if (! empty($cur[$addr])) {
+		unset($cur[$addr]);
+		$done[] = $addr;
 	    }
 	foreach ($done as $who)
 	    unset($ps[$who]);
 	foreach ($cur as $who)
 	    $who->remove();
 	// make what's left
-	foreach ($ps as $who) {
+	foreach ($ps as $addr=>$party) {
 	    $p = new spParticipant();
 	    $p->m_owner = $md->m_owner;
 	    $p->m_deal = $md->getOid();
-	    $p->m_Addr = $who;
+	    $p->m_Addr = $party->addr;
+	    $p->m_Name = $party->name;
 	    $p->create();
 	}
     }
