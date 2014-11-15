@@ -311,4 +311,16 @@ function tableHead($name,$cols,$head=null) {
     echo "</tr>\n</thead><tbody>";
 }
 
+class commaList {
+    public $sep = '';
+    public $str = "";
+    public $del = ',';
+    public function __construct($del = ",") { $this->del = $del; }
+    public function append($str) {
+	$this->str .= $this->sep . $str;
+	$this->sep = $this->del;
+	return $this->str;
+    }
+}
+
 ?>
