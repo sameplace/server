@@ -439,10 +439,10 @@ class spDealSpace extends spOid {
 	  "name"	=> $this->m_name);
 	$ps = spParticipant::lookupAll($this->getOid());
 	if (0 != count($ps)) {
-	    $cl = new commaList();
+	    $cl = array();
 	    foreach ($ps as $p)
-		$cl->append($p->m_oStr);
-	    $me['parts'] = $cl->str;
+		$cl[] = $p->m_oStr;
+	    $me['parts'] = $cl;
 	}
 	return array_merge(parent::toJson(), $me);
     }
