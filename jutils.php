@@ -34,7 +34,9 @@ function jValidateObj(&$ret, &$obj, $args = null) {
 	}
     }
 
-    return myInflate($ret->me, $obj, $ret->oid);
+    if (null != myInflate($ret->me, $obj, $ret->oid))
+	return $ret;
+    return null;
 }
 
 // get-dealspace by oid, plus args
