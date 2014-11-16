@@ -256,6 +256,20 @@ class spUser extends spOid {
 	$v[] = $this->m_badpass;	// no bad passwords yet
 	return executeDoNotDie(spGetDB(), $q, $v);
     }
+    public function updatePassword($p) {
+	$this->setPassword($p);
+
+	// do it in a transaction
+	$db = spGetDB();
+	beginTranOrDie($db);
+	$q = "UPDATE User SET password=? WHERE oid=?";
+	$v = array(password_hash($this->getPassword(), PASSWORD_DEFAULT),
+	  $this->getOid());
+	executeDoNotDie($db, $q, $v);
+	$this->updateMTime();
+	commitOrDie($db);
+	return $this->toJsonUpdated();
+    }
     public function createDefDealSpace() {
 	$ds = $this->getDefDeal();
 	if (empty($ds)) {
