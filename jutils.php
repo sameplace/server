@@ -25,16 +25,20 @@ function myInflate(&$me, &$obj, $oid) {
     return $obj;
 }
 
-function jValidateObj(&$ret, &$obj, $args = null) {
-    if (! empty($args)) {
-	$p = explode(',', $args);
-	foreach ($p as $arg) {
-	    if (! isset($_REQUEST[$arg]))
-		return jError();
-	    $ret->$arg = $_REQUEST[$arg];
-	}
+function jMergeArgs(&$ret, $args) {
+    $p = explode(',', $args);
+    foreach ($p as $arg) {
+	if (! isset($_REQUEST[$arg]))
+	    return jError();
+	$ret->$arg = $_REQUEST[$arg];
     }
+    return $ret;
+}
 
+function jValidateObj(&$ret, &$obj, $args = null) {
+    if (! empty($args))
+	if (null == jMergeArgs($ret, $args))
+	    return jError();
     if (null != myInflate($ret->me, $obj, $ret->oid))
 	return $ret;
     return null;
@@ -65,6 +69,22 @@ function jGetParty($args) {
 	return $ret;
     $ret->party = new spParticipant;
     return jValidateObj($ret, $ret->party, $args);
+}
+
+// get-user by oid, plus args
+function jGetUser($args) {
+    if (empty($_REQUEST['oid'])) {
+	$ret = new stdClass;
+	$ret->user = spUser::lookupMe();
+	if (null == $ret->user)
+	    return jError();
+	return jMergeArgs($ret, $args);
+    }
+    $ret = jGetOid();
+    if (null == $ret)
+	return $ret;
+    $ret->user = new spUser;
+    return jValidateObj($ret, $ret->user, $args);
 }
 
 ?>
