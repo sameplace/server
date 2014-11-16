@@ -2,6 +2,7 @@
 
 function jError() {
     echo json_encode('Error: You do not belong here!');
+    // var_dump(debug_backtrace());
     return null;
 }
 
@@ -28,7 +29,7 @@ function jValidateObj(&$ret, &$obj, $args = null) {
     if (! empty($args)) {
 	$p = explode(',', $args);
 	foreach ($p as $arg) {
-	    if (empty($_REQUEST[$arg]))
+	    if (! isset($_REQUEST[$arg]))
 		return jError();
 	    $ret->$arg = $_REQUEST[$arg];
 	}
@@ -55,6 +56,15 @@ function jGetMD($args) {
 	return $ret;
     $ret->doc = new spMimeDoc;
     return jValidateObj($ret, $ret->doc, $args);
+}
+
+// get-participant by oid, plus args
+function jGetParty($args) {
+    $ret = jGetOid();
+    if (null == $ret)
+	return $ret;
+    $ret->party = new spParticipant;
+    return jValidateObj($ret, $ret->party, $args);
 }
 
 ?>
