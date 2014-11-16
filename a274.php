@@ -14,7 +14,7 @@ foreach ($parts as $part)
     $which[$part] = $part;
 $which = array_keys($which);
 $ret = array();
-$ps = spParticipant::lookupAll($c->ds);
+$ps = spParticipant::lookupAll($c->ds->getOid());
 foreach ($ps as $party)
     if (in_array($party->m_oStr, $which))
 	$ret[] = $party->toJson();
