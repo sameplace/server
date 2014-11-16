@@ -159,6 +159,7 @@ class spOid {
 	$v[] = gmdate('Y-m-d H:i:s');
 	$v[] = $this->getOid();
 	executeOrDie(spGetDB(), $q, $v);
+	$this->m_mTime = $v[0];
     }
 
     public static function updateMTimes($oids) {
@@ -825,6 +826,21 @@ class spParticipant extends spOid {
 	    $ret[$p->m_Addr] = $p;
 	}
 	return $ret;
+    }
+    public static function isValidRole($r) {
+	static $okVals = array("0","1","2","3");
+	return in_array($r, $okVals);
+    }
+    public function setRole($r) {
+	// do it in a transaction
+	$db = spGetDB();
+	beginTranOrDie($db);
+	$q = "UPDATE Participant SET Role=? WHERE oid=?";
+	$v = array($r, $this->getOid());
+	executeDoNotDie($db, $q, $v);
+	$this->updateMTime();
+	commitOrDie($db);
+	return $this->toJsonUpdated();
     }
     public static function reset(&$md) {
 	// what's the list look like so far?
