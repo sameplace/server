@@ -71,20 +71,23 @@ function jGetParty($args) {
     return jValidateObj($ret, $ret->party, $args);
 }
 
-// get-user by oid, plus args
+// get-user by optional oid, plus args
 function jGetUser($args) {
+    $ret = new stdClass;
+    $ret->user = spUser::lookupMe();
     if (empty($_REQUEST['oid'])) {
-	$ret = new stdClass;
-	$ret->user = spUser::lookupMe();
 	if (null == $ret->user)
 	    return jError();
 	return jMergeArgs($ret, $args);
     }
-    $ret = jGetOid();
-    if (null == $ret)
-	return $ret;
-    $ret->user = new spUser;
-    return jValidateObj($ret, $ret->user, $args);
+    $me = $ret->user->m_oStr;
+    $isAdmin = $ret->user->isAdmin();
+    $ret->oid = $_REQUEST['oid'];
+    if (! $ret->user->inflate($ret->oid))
+	return jError();
+    if (! $isAdmin && $me != $ret->oid)
+	return jError();
+    return jMergeArgs($ret, $args);
 }
 
 ?>
