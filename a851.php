@@ -11,6 +11,9 @@ if (null == $c)
 if (! password_verify($c->op, $c->user->getPassword()))
     return jError();
 
+if (false === password_hash($c->np, PASSWORD_DEFAULT))
+    return jError();
+
 $c->user->updatePassword($c->np);
 
 echo json_encode($c->user->toJsonUpdated());
