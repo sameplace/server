@@ -1,8 +1,13 @@
 <?php
 
-function jError() {
+function jError($str = null) {
     echo json_encode('Error: You do not belong here!');
-    // var_dump(debug_backtrace());
+    if (empty($_SERVER['REMOTE_ADDR'])) {
+	if (! empty($str))
+	    echo 'Error: '.$str."\n";
+	var_dump(debug_backtrace());
+    } else if (! empty($str))
+	spError($str);
     return null;
 }
 
