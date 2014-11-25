@@ -13,8 +13,8 @@ class spOid {
     public function toJson() {
 	return array(
 	  "oid"		=> $this->m_oStr,
-	  "type"	=> $this->oTypeStr($this->m_oType),
-	  "owner"	=> $this->encode($this->m_owner),
+	  "cxt"		=> spDateToHex($this->m_cTime),
+	  "mxt"		=> spDateToHex($this->m_mTime),
 	  "cTime"	=> $this->m_cTime,
 	  "mTime"	=> $this->m_mTime);
     }
@@ -22,6 +22,7 @@ class spOid {
     public function toJsonUpdated() {
 	return array(
 	  "oid"		=> $this->m_oStr,
+	  "mxt"		=> spDateToHex($this->m_mTime),
 	  "mTime"	=> $this->m_mTime);
     }
 
