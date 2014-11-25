@@ -12,6 +12,24 @@ function spAuthLog($str) {
     fclose($fp);
 }
 
+function spError($str) {
+    $dir = "errors/".gmdate("Y/m/d/H/i/s");
+    mkdir($dir, 0777, true);
+    $fp = fopen($dir."/errors.log","a+");
+    fputs($fp,$str."\n");
+    if (! empty($_SESSION['email']))
+	foreach ($_SESSION as $key=>$val)
+	    fputs($fp, '_SESSION['.$key.']='.$val."\n");
+    foreach ($_POST as $key=>$val)
+	fputs($fp, '_POST['.$key.']='.$val."\n");
+
+    $serv = array("REMOTE_ADDR","HTTP_X_FORWARDED_FOR","REQUEST_URI");
+    foreach ($serv as $val)
+	if (! empty($_SERVER[$val]))
+	    fputs($fp, '_SERVER['.$val.']='.$_SERVER[$val]."\n");
+    fclose($fp);
+}
+
 function spAdminEmail($body, $subj = null) {
     if (empty($subj))
 	$subj = "Sameplace Admin Message";
@@ -69,6 +87,14 @@ function spInputRadio($name, $checked, $attr = "") {
 
 function spInputText($name, $attr = "") {
     return '<input type="text" name="'.$name.'"'.$attr.'/>';
+}
+
+function spDateToHex($tStamp) {
+    $bp = explode(' ', $tStamp);
+    $dp = explode('-', $bp[0]);
+    $tp = explode(':', $bp[1]);
+    $ti = mktime($tp[0], $tp[1], $tp[2], $dp[1], $dp[2], $dp[0]);
+    return strtoupper(dechex($ti));
 }
 
 ?>
