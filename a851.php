@@ -9,10 +9,10 @@ if (null == $c)
     return;
 
 if (! password_verify($c->op, $c->user->getPassword()))
-    return jError();
+    return jError("password didn't verify");
 
 if (false === password_hash($c->np, PASSWORD_DEFAULT))
-    return jError();
+    return jError("password didn't hash");
 
 $c->user->updatePassword($c->np);
 
