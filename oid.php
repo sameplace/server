@@ -457,7 +457,7 @@ class spDealSpace extends spOid {
 	if (0 != count($ps)) {
 	    $cl = array();
 	    foreach ($ps as $p)
-		$cl[] = $p->m_oStr;
+		$cl[] = $p->m_oStr.':'.spDateToHex($p->m_mTime);
 	    $me['parts'] = $cl;
 	}
 	return array_merge(parent::toJson(), $me);
