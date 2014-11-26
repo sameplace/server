@@ -31,6 +31,8 @@ function myInflate(&$me, &$obj, $oid) {
 }
 
 function jMergeArgs(&$ret, $args) {
+    if (empty($args))
+	return $ret;
     $p = explode(',', $args);
     foreach ($p as $arg) {
 	if (! isset($_REQUEST[$arg]))
@@ -40,7 +42,7 @@ function jMergeArgs(&$ret, $args) {
     return $ret;
 }
 
-function jValidateObj(&$ret, &$obj, $args = null) {
+function jValidateObj(&$ret, &$obj, $args) {
     if (! empty($args))
 	if (null == jMergeArgs($ret, $args))
 	    return jError();
@@ -50,7 +52,7 @@ function jValidateObj(&$ret, &$obj, $args = null) {
 }
 
 // get-dealspace by oid, plus args
-function jGetDS($args) {
+function jGetDS($args = null) {
     $ret = jGetOid();
     if (null == $ret)
 	return $ret;
@@ -59,7 +61,7 @@ function jGetDS($args) {
 }
 
 // get-mimedoc by oid, plus args
-function jGetMD($args) {
+function jGetMD($args = null) {
     $ret = jGetOid();
     if (null == $ret)
 	return $ret;
@@ -68,7 +70,7 @@ function jGetMD($args) {
 }
 
 // get-participant by oid, plus args
-function jGetParty($args) {
+function jGetParty($args = null) {
     $ret = jGetOid();
     if (null == $ret)
 	return $ret;
@@ -77,7 +79,7 @@ function jGetParty($args) {
 }
 
 // get-user by optional oid, plus args
-function jGetUser($args) {
+function jGetUser($args = null) {
     $ret = new stdClass;
     $ret->user = spUser::lookupMe();
     if (empty($_REQUEST['oid'])) {
