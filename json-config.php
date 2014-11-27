@@ -1,7 +1,7 @@
 <?php
 
-include("config.php");
-include("jutils.php");
+require_once 'config.php';
+require_once 'jutils.php';
 
 if (! isset($_SESSION))
     session_start();
