@@ -2,7 +2,7 @@
 
 // a315 oid=[sentinel] n=[name]
 
-include("json-config.php");
+require_once 'json-config.php';
 
 $c = jGetMD("n");
 if (null == $c)

@@ -2,7 +2,7 @@
 
 // a923 oid=[dealspace] n=[new name]
 
-include("json-config.php");
+require_once 'json-config.php';
 
 $c = jGetDS("n");
 if (null == $c)

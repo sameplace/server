@@ -2,9 +2,9 @@
 
 // a851 oid=[user] op=[old-password] np=[new-password]
 
-include("json-config.php");
+require_once 'json-config.php';
 
-$c = jGetUser("op","np");
+$c = jGetUser("op,np");
 if (null == $c)
     return;
 

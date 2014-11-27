@@ -2,7 +2,7 @@
 
 // a695 oid=[participant] r=[role]
 
-include("json-config.php");
+require_once 'json-config.php';
 
 $c = jGetParty("r");
 if (null == $c)
