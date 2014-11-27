@@ -36,7 +36,7 @@ function jMergeArgs(&$ret, $args) {
     $p = explode(',', $args);
     foreach ($p as $arg) {
 	if (! isset($_REQUEST[$arg]))
-	    return jError();
+	    return jError("required arg '".$arg."' missing");
 	$ret->$arg = $_REQUEST[$arg];
     }
     return $ret;
@@ -49,6 +49,61 @@ function jValidateObj(&$ret, &$obj, $args) {
     if (null != myInflate($ret->me, $obj, $ret->oid))
 	return $ret;
     return null;
+}
+
+function jParseOidList($ol) {
+    if (empty($ol))
+	return jError("jParseOidList: required oidlist missing");
+
+    // grab the list, de-duped
+    $which = array();
+    $parts = explode(',', $ol);
+    foreach ($parts as $part)
+	$which[$part] = $part;
+
+    // track possible cacheing
+    $ret = array();
+    foreach ($which as $key=>$val) {
+	$wp = explode(':',$key);
+	$k = $wp[0]; $v = "";
+	switch (count($wp)) {
+	case 2:
+	    $v = $wp[1];
+	    break;
+	case 1:
+	    break;
+	default:
+	    return jError("syntax error oid='".$key."'");
+	}
+	if (isset($ret[$k]))
+	    return jError("unsynced duplicate oid=".$k);
+	$ret[$k] = $v;
+    }
+
+    if (0 == count($ret))
+	return jError("jParseOidList: no oids found in '".$ol."'");
+
+    return $ret;
+}
+
+function jFilterOids(&$ol, &$oids) {
+    $ret = array();
+    $keys = array_keys($ol);
+    foreach ($oids as $oid)
+	if (in_array($oid->m_oStr, $keys)) {
+	    if (! empty($ol[$oid->m_oStr])) {
+		$mt = spDateToHex($oid->m_mTime);
+		$gt = $ol[$oid->m_oStr];
+		if ($gt > $mt)
+		    return jError("bad cache val: '".$oid->m_oStr.':'.$gt."'");
+		if ($mt > $gt)
+		    $ret[] = $oid->toJson();
+		else
+		    $ret[] = $oid->toJsonUpdated();
+	    } else
+		$ret[] = $oid->toJson();
+	}
+    return $ret;
 }
 
 // get-dealspace by oid, plus args
