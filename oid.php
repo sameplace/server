@@ -458,6 +458,13 @@ class spDealSpace extends spOid {
 		$cl[] = $p->m_oStr.':'.spDateToHex($p->m_mTime);
 	    $me['parts'] = $cl;
 	}
+	$mds = spMimeDoc::lookupAll($this->getOid());
+	if (0 != count($mds)) {
+	    $cl = array();
+	    foreach ($mds as $md)
+		$cl[] = $md->m_oStr.':'.spDateToHex($md->m_mTime);
+	    $me['mdocs'] = $cl;
+	}
 	return array_merge(parent::toJson(), $me);
     }
     public function __construct() {
