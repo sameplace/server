@@ -730,6 +730,30 @@ class spMimeDoc extends spOid {
 	}
 	return $ret;
     }
+    public function getParties(&$ret) {
+	$which = array("From","To","Cc");
+	foreach ($which as $h) {
+	    $tag = "m_".$h;
+	    if (empty($this->$tag))
+		continue;
+	    $hdr = $this->$tag;
+	    $whom = mailparse_rfc822_parse_addresses($hdr);
+	    foreach ($whom as $who) {
+		if (empty($who['address']))
+		    continue;
+		$addr = $who['address'];
+		if ("assist@arnie.sameplace.com" == $addr)
+		    continue;
+		$party = new stdClass;
+		$party->hdr = $h;
+		$party->addr = $addr;
+		$party->name = "";
+		if ($who['display'] != $who['address'])
+		    $party->name = $who['display'];
+		$ret[$addr] = $party;
+	    }
+	}
+    }
 };
 
 class spAttachment extends spOid {
@@ -868,29 +892,9 @@ class spParticipant extends spOid {
 	// grab all the docs, make a list
 	$ps = array();
 	$docs = spMimeDoc::lookupAll($md->getOid());
-	foreach ($docs as $doc) {
-	    $which = array("From","To","Cc");
-	    foreach ($which as $h) {
-		$tag = "m_".$h;
-		if (empty($doc->$tag))
-		    continue;
-		$hdr = $doc->$tag;
-		$whom = mailparse_rfc822_parse_addresses($hdr);
-		foreach ($whom as $who) {
-		    if (empty($who['address']))
-			continue;
-		    $addr = $who['address'];
-		    if ("assist@arnie.sameplace.com" == $addr)
-			continue;
-		    $party = new stdClass;
-		    $party->addr = $addr;
-		    $party->name = "";
-		    if ($who['display'] != $who['address'])
-			$party->name = $who['display'];
-		    $ps[$addr] = $party;
-		}
-	    }
-	}
+	foreach ($docs as $doc)
+	    $doc->getParties($ps);
+
 	// already have 'em?
 	$done = array();
 	foreach ($ps as $addr=>$party)
