@@ -253,7 +253,9 @@ class spUser extends spOid {
 	$v[] = $this->m_validated;	// not validated
 	$v[] = $this->m_locked;		// not locked
 	$v[] = $this->m_badpass;	// no bad passwords yet
-	return executeDoNotDie(spGetDB(), $q, $v);
+	executeDoNotDie(spGetDB(), $q, $v);
+	inflate($this->encode($this->getOid()));
+	return $this;
     }
     public function updatePassword($p) {
 	$this->setPassword($p);
@@ -413,7 +415,9 @@ class spAttribute {
 	$v[] = $this->m_referant;
 	$v[] = $this->m_aKey;
 	$v[] = $this->m_aValue;
-	return executeDoNotDie(spGetDB(), $q, $v);
+	executeDoNotDie(spGetDB(), $q, $v);
+	inflate($this->encode($this->getOid()));
+	return $this;
     }
     public static function lookupAll($o = null, $r = null) {
 	$ret = array();
@@ -443,7 +447,9 @@ class spAttribute {
 	$a->m_referant = $o;
 	$a->m_aKey = $k;
 	$a->m_aValue = $v;
-	return $a->create();
+	$a->create();
+	inflate($a->encode($a->getOid()));
+	return $a;
     }
 };
 
@@ -490,7 +496,9 @@ class spDealSpace extends spOid {
 	$v[] = $this->m_editable;
 	$v[] = $this->m_hidden;
 	$v[] = $this->m_name;
-	return executeDoNotDie(spGetDB(), $q, $v);
+	executeDoNotDie(spGetDB(), $q, $v);
+	inflate($this->encode($this->getOid()));
+	return $this;
     }
     public static function lookupAll($o = null) {
 	$ret = array();
@@ -646,7 +654,9 @@ class spMimeDoc extends spOid {
 	$v[] = $this->m_FromAddr;
 	$v[] = $this->m_hidden;
 	$v[] = $this->m_private;
-	return executeDoNotDie(spGetDB(), $q, $v);
+	executeDoNotDie(spGetDB(), $q, $v);
+	inflate($this->encode($this->getOid()));
+	return $this;
     }
     public function setDeal($did) {
 	$db = spGetDB();
@@ -788,7 +798,9 @@ class spAttachment extends spOid {
 	$v[] = $this->m_mType;
 	$v[] = $this->m_name;
 	$v[] = $this->m_path;
-	return executeDoNotDie(spGetDB(), $q, $v);
+	executeDoNotDie(spGetDB(), $q, $v);
+	inflate($this->encode($this->getOid()));
+	return $this;
     }
     public static function lookupAll($md) {
 	$ret = array();
@@ -852,7 +864,9 @@ class spParticipant extends spOid {
 	$v[] = $this->m_Addr;
 	$v[] = $this->m_Name;
 	$v[] = $this->m_Role;
-	return executeDoNotDie(spGetDB(), $q, $v);
+	executeDoNotDie(spGetDB(), $q, $v);
+	inflate($this->encode($this->getOid()));
+	return $this;
     }
     public static function lookupAll($md) {
 	$ret = array();
