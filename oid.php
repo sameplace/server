@@ -245,7 +245,8 @@ class spUser extends spOid {
 	$v[] = $this->getOid();
 	$v[] = $this->m_realname;
 	$v[] = $this->m_email;
-	$v[] = password_hash($this->getPassword(),PASSWORD_DEFAULT);
+	if (! empty($this->m_password))
+	    $v[] = password_hash($this->getPassword(),PASSWORD_DEFAULT);
 
 	$v[] = $this->m_question;	// blank by default
 	$v[] = $this->m_answer;		// blank by default
@@ -254,7 +255,7 @@ class spUser extends spOid {
 	$v[] = $this->m_locked;		// not locked
 	$v[] = $this->m_badpass;	// no bad passwords yet
 	executeDoNotDie(spGetDB(), $q, $v);
-	inflate($this->encode($this->getOid()));
+	$this->inflate($this->encode($this->getOid()));
 	return $this;
     }
     public function updatePassword($p) {
@@ -416,7 +417,6 @@ class spAttribute {
 	$v[] = $this->m_aKey;
 	$v[] = $this->m_aValue;
 	executeDoNotDie(spGetDB(), $q, $v);
-	inflate($this->encode($this->getOid()));
 	return $this;
     }
     public static function lookupAll($o = null, $r = null) {
@@ -448,7 +448,6 @@ class spAttribute {
 	$a->m_aKey = $k;
 	$a->m_aValue = $v;
 	$a->create();
-	inflate($a->encode($a->getOid()));
 	return $a;
     }
 };
@@ -497,7 +496,7 @@ class spDealSpace extends spOid {
 	$v[] = $this->m_hidden;
 	$v[] = $this->m_name;
 	executeDoNotDie(spGetDB(), $q, $v);
-	inflate($this->encode($this->getOid()));
+	$this->inflate($this->encode($this->getOid()));
 	return $this;
     }
     public static function lookupAll($o = null) {
@@ -594,6 +593,15 @@ class spMimeDoc extends spOid {
 	if (! empty($this->m_Cc))
 	    $me['Cc'] = $this->m_Cc;
 
+	$partys = array();
+	$cur = spParticipant::lookupAll($this->m_deal);
+	$this->getParties($partys);
+	foreach ($partys as $party) {
+	    $p = $cur[$party->addr];
+	    $me["p".$party->hdr] = $this->encode($p->getOid()).':'
+	      .spDateToHex($p->m_mTime);
+	}
+
 	// XXX find content
 	$what = "";
 	$wkey = "";
@@ -655,7 +663,7 @@ class spMimeDoc extends spOid {
 	$v[] = $this->m_hidden;
 	$v[] = $this->m_private;
 	executeDoNotDie(spGetDB(), $q, $v);
-	inflate($this->encode($this->getOid()));
+	$this->inflate($this->encode($this->getOid()));
 	return $this;
     }
     public function setDeal($did) {
@@ -799,7 +807,7 @@ class spAttachment extends spOid {
 	$v[] = $this->m_name;
 	$v[] = $this->m_path;
 	executeDoNotDie(spGetDB(), $q, $v);
-	inflate($this->encode($this->getOid()));
+	$this->inflate($this->encode($this->getOid()));
 	return $this;
     }
     public static function lookupAll($md) {
@@ -865,7 +873,7 @@ class spParticipant extends spOid {
 	$v[] = $this->m_Name;
 	$v[] = $this->m_Role;
 	executeDoNotDie(spGetDB(), $q, $v);
-	inflate($this->encode($this->getOid()));
+	$this->inflate($this->encode($this->getOid()));
 	return $this;
     }
     public static function lookupAll($md) {
