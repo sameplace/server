@@ -2,6 +2,8 @@
 
 include("config.php");
 
+require_once('PHPMailer/PHPMailerAutoload.php');
+
 $fp = fopen("php://stdin","r");
 $fn = tempnam(".","assist_");
 $tmp = fopen($fn,"w");
@@ -17,9 +19,49 @@ function errorOut($str) {
     return 0;
 }
 
+function setupDemo(&$who) {
+    $u = new spUser();
+    $u->m_realname = $who['display'];
+    $u->m_email = $who['address'];
+    if ($u->create()) {
+	$u->validate();
+	$ds = $u->createDefDealSpace();
+	if (empty($ds))
+	    return 0;
+
+	$url = 'https://secure.bitway.com/sp'
+	  ."/demo.php?u=$u->m_oStr";
+
+	$pm = new PHPMailer;
+	$pm->isSMTP();
+	$pm->Host = "secure.bitway.com";
+	$pm->SMTPAuth = true;
+	$pm->Username = 'jordan';
+	$pm->SMTPSecure = 'tls';
+	$pm->Port = 587;
+
+	$pm->From = 'admin@arnie.sameplace.com';
+	$pm->FromName = 'Arnie Stumple';
+	if ($u->m_email == $u->m_realname)
+	    $pm->AddAddress($u->m_email);
+	else
+	    $pm->AddAddress($u->m_email, $u->m_realname);
+	$pm->AddBCC('jordan@sameplace.com');
+	$pm->Subject = 'Sameplace Demo Activation';
+	$pm->IsHTML(true);
+	$pm->Body = "Thanks for trying Sameplace!"
+	  .' Click <a href="'.$url.'">here</a> to see what your buyers'
+	  .' will see when you use Sameplace for real.';
+
+	$pm->send();
+
+	return $ds->getOid();
+    }
+    return 0;
+}
+
 function findTheDeal(&$headers) {
     // find the deal
-    $deal = 0;
     if (! empty($headers['in-reply-to'])) {
 	$irt = $headers['in-reply-to'];
 	$doc = spMimeDoc::lookupMessageId($irt);
@@ -50,10 +92,18 @@ function findTheDeal(&$headers) {
 		    if (! empty($ds))
 			return $ds->getOid();
 		}
+
+		/* XXX DEMOMODE */
+		$demoMode = true;
+		if ($demoMode)
+		    $ret = setupDemo($who);
+		if (0 != $ret)
+		    return $ret;
 	    }
 	}
     }
 
+    // stick it into the admin account for now
     $admin = spUser::lookupEmail("archie@sameplace.com");
     $ds = $admin->getDefDeal();
     return $ds->getOid();
