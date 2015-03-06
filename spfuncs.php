@@ -14,7 +14,7 @@ function spAuthLog($str) {
 
 function spError($str) {
     $dir = "errors/".gmdate("Y/m/d/H/i/s");
-    mkdir($dir, 0777, true);
+    @mkdir($dir, 0777, true);
     $fp = fopen($dir."/errors.log","a+");
     fputs($fp,$str."\n");
     if (! empty($_SESSION['email']))
