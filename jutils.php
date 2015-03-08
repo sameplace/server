@@ -24,9 +24,9 @@ function jGetOid() {
 
 function myInflate(&$me, &$obj, $oid) {
     if (! $obj->inflate($oid))
-	return jError();
+	return jError('myInflate: inflate failed');
     if (! $me->isAdmin() && $obj->m_owner != $me->getOid())
-	return jError();
+	return jError('myInflate: permissions');
     return $obj;
 }
 
