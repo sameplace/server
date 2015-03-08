@@ -1,22 +1,6 @@
 <?php
 
-if (empty($_REQUEST['u'])) {
-    header('Location: login.php');
-    return;
-}
-
 include("config.php");
-
-$u = new spUser;
-if (! $u->inflate($_REQUEST['u']) || $u->isLocked()) {
-    header('Location: login.php');
-    return;
-}
-$p = $u->getPassword();
-if (! empty($p)) {
-    header('Location: login.php');
-    return;
-}
 
 header('Content-Type: application/json;charset=utf-8;');
 spHeaderHack();
@@ -25,6 +9,30 @@ spHeaderHack();
 if (isset($_SESSION))  {
     $_SESSION = array(); // clear the session vars
     session_destroy();   // destroy the session
+}
+
+if (empty($_REQUEST['u'])) {
+    spError("no u argument");
+    echo json_encode('NOPE');
+    return;
+}
+
+$u = new spUser;
+if (! $u->inflate($_REQUEST['u'])) {
+    spError("problem with u");
+    echo json_encode('NOPE');
+    return;
+}
+if ($u->isLocked()) {
+    spError("u is locked");
+    echo json_encode('NOPE');
+    return;
+}
+$p = $u->getPassword();
+if (! empty($p)) {
+    spError("u has a password");
+    echo json_encode('NOPE');
+    return;
 }
 
 // make a new session
