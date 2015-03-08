@@ -598,7 +598,7 @@ class spMimeDoc extends spOid {
 	$this->getParties($partys);
 	foreach ($partys as $party) {
 	    $p = $cur[$party->addr];
-	    $me["p".$party->hdr] = $this->encode($p->getOid()).':'
+	    $me["p".$party->hdr] = $p->m_oStr.':'
 	      .spDateToHex($p->m_mTime);
 	}
 
