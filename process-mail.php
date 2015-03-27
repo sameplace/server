@@ -29,8 +29,8 @@ function setupDemo(&$who) {
 	if (empty($ds))
 	    return 0;
 
-	$url = 'https://secure.bitway.com/sp'
-	  ."/demo.php?u=$u->m_oStr";
+	$url = 'http://tonic.sameplace.com/'
+	  ."demo.php?u=$u->m_oStr";
 
 	$pm = new PHPMailer;
 	$pm->isSMTP();
